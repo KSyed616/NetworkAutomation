@@ -16,11 +16,3 @@ devices:
     secret: cisco123
     groups:
       - routers
-
-groups:
-  routerS:
-    platform: ios
-    connection_options:
-      netmiko:
-        extras:
-          session_timeout: 60

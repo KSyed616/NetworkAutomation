@@ -17,8 +17,8 @@ def menu():
         "q": {"title": "Quit", "module": None}
     }
 
-    for key, options in options.items():
-        print(f"{key}. {options['title']}")
+    for key, option in options.items():
+        print(f"{key}. {option['title']}")
 
     return options
 
