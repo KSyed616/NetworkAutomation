@@ -1,0 +1,26 @@
+devices:
+  - name: R1
+    hostname: 192.168.79.129
+    device_type: cisco_ios
+    username: admin
+    password: cisco123
+    secret: cisco123
+    groups:
+      - routers
+
+  - name: R2
+    hostname: 192.168.30.129
+    device_type: cisco_ios
+    username: admin
+    password: cisco123
+    secret: cisco123
+    groups:
+      - routers
+
+groups:
+  routerS:
+    platform: ios
+    connection_options:
+      netmiko:
+        extras:
+          session_timeout: 60
