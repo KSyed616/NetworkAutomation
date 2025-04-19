@@ -13,7 +13,6 @@ def menu():
         "1": {"title": "Device Management", "module": "device_mgmt"},
         "2": {"title": "Configuration Management", "module": "config_mgmt"},
         "3": {"title": "Device Configuration", "module": "device_config"},
-        "4": {"title": "SNMP Configuration", "module": "snmp_config"},
         "q": {"title": "Quit", "module": None}
     }
 

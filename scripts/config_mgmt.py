@@ -28,6 +28,8 @@ def submenu():
     print("6. Backup Configuration")
     print("7. Load Saved Configuration")
     print("8. Load Backup Configuration")
+    print("9. Change Device")
+    print("10. Exit")
 
     return input("\nSelect what you want to do")
 
@@ -99,13 +101,16 @@ def save_config_gns(device):
         'host': device['hostname'],
         'username': device['username'],
         'password': device['password'],
-        'secret': device['secret']
+        'secret': device['secret'],
+        'session_log': 'netmiko_debug.log'
     }
     try:
         connection = ConnectHandler(**netmiko_dev)
         connection.enable()
+
         print(f"Connected to {netmiko_dev['host']}")
-        output = connection.send_command("write")
+        output = connection.send_command_timing("write")
+        #connection.send_command_timing("\n")
         print(output, "\n\n")
         connection.disconnect()
     except Exception as e:
@@ -213,46 +218,53 @@ def load_startup_config(device):
 
 def main():
     devices = load_devices()
-    print("Available devices:")
-    for device in devices:
-        print(f"- {device['name']}")
-
-    target = input("Select a router; R1 or R2: ").strip()
-    device = next((d for d in devices if d['name'] == target), None)
-    if not device:
-        print("Device not found.")
-        return
-
     while True:
+        print("Available devices:")
+        for device in devices:
+            print(f"- {device['name']}")
 
-        choice = submenu()
+        target = input("Select a router; R1 or R2: ").strip()
+        device = next((d for d in devices if d['name'] == target), None)
+        if not device:
+            print("Device not found.")
+            return
 
-        if choice == '1':
-            view_running_config(device)
+        while True:
 
-        elif choice == '2':
-            view_startup_config(device)
+            choice = submenu()
 
-        elif choice == '3':
-            view_backup_config(device)
+            if choice == '1':
+                view_running_config(device)
 
-        elif choice == '4':
-            save_config_gns(device)
+            elif choice == '2':
+                view_startup_config(device)
 
-        elif choice == '5':
-            save_config(device)
+            elif choice == '3':
+                view_backup_config(device)
 
-        elif choice == '6':
-            backup_config(device)
+            elif choice == '4':
+                save_config_gns(device)
 
-        elif choice == '7':
-            load_startup_config(device)
+            elif choice == '5':
+                save_config(device)
 
-        elif choice == '8':
-            load_backup_config(device)
+            elif choice == '6':
+                backup_config(device)
 
-        else:
-            print("Invalid choice")
+            elif choice == '7':
+                load_startup_config(device)
+
+            elif choice == '8':
+                load_backup_config(device)
+
+            elif choice == '9':
+                break
+
+            elif choice == '10':
+                return
+
+            else:
+                print("Invalid choice")
 
 
 if __name__ == "__main__":
