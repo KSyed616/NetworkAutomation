@@ -110,7 +110,7 @@ def save_config_gns(device):
 
         print(f"Connected to {netmiko_dev['host']}")
         output = connection.send_command_timing("write")
-        #connection.send_command_timing("\n")
+
         print(output, "\n\n")
         connection.disconnect()
     except Exception as e:

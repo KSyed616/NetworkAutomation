@@ -1,17 +1,19 @@
-import os
-import yaml
 from netmiko import ConnectHandler
+
 from scripts.device_mgmt import load_devices
+from scripts.device_mgmt import ip_routes
+
 
 def submenu():
     print("--------Device Configuration--------")
     print("1. Change IP address on an interface")
     print("2. Change Hostname")
     print("3. Add Default Route")
-    print("4. Add Static Route")
+    print("4. Change Static Route")
     print("5. Pick another Device")
     print("6. Exit")
     return input("Select what you want to do: ")
+
 
 def connectToDevice(device):
     try:
@@ -28,7 +30,13 @@ def connectToDevice(device):
         print(f"Connection failed: {e}")
         return None
 
+
 def changeIpAddress(device):
+    print("Available Interfaces:\n"
+          "e1/0\n"
+          "e1/1\n"
+          "e1/2\n"
+          "e1/3\n\n")
     intf = input("Enter interface:").strip()
     ip = input("Enter new IP address:").strip()
     mask = input("Enter subnet mask:").strip()
@@ -41,22 +49,38 @@ def changeIpAddress(device):
     ]
     applyConfig(device, commands)
 
+
 def changeHostname(device):
     new_hostname = input("Enter new hostname: ").strip()
     commands = [f"hostname {new_hostname}"]
     applyConfig(device, commands)
+
 
 def addDefaultRoute(device):
     next_hop = input("Enter next-hop IP for default route:").strip()
     command = f"ip route 0.0.0.0 0.0.0.0 {next_hop}"
     applyConfig(device, [command])
 
-def addStaticRoute(device):
-    destination = input("Enter destination network:").strip()
-    mask = input("Enter subnet mask:").strip()
-    next_hop = input("Enter next-hop IP address:").strip()
-    command = f"ip route {destination} {mask} {next_hop}"
-    applyConfig(device, [command])
+
+def changeStaticRoute(device):
+    print("1. Delete route\n2. Add Route")
+    choice = input("What do you want to do?")
+
+    if choice == '1':
+        ip_routes(device)
+        destination = input("Enter destination network:").strip()
+        mask = input("Enter subnet mask:").strip()
+        next_hop = input("Enter next-hop IP address:").strip()
+        command = f"no ip route {destination} {mask} {next_hop}"
+        applyConfig(device, [command])
+
+    if choice == '2':
+        destination = input("Enter destination network:").strip()
+        mask = input("Enter subnet mask:").strip()
+        next_hop = input("Enter next-hop IP address:").strip()
+        command = f"ip route {destination} {mask} {next_hop}"
+        applyConfig(device, [command])
+
 
 def applyConfig(device, commands):
     conn = connectToDevice(device)
@@ -70,6 +94,7 @@ def applyConfig(device, commands):
         conn.disconnect()
     except Exception as e:
         print(f"Failed to apply config: {e}")
+
 
 def main():
     devices = load_devices()
@@ -95,7 +120,7 @@ def main():
             elif choice == '3':
                 addDefaultRoute(device)
             elif choice == '4':
-                addStaticRoute(device)
+                changeStaticRoute(device)
             elif choice == '5':
                 break
             elif choice == '6':
