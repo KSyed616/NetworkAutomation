@@ -185,7 +185,7 @@ def load_backup_config(device):
 
         filename = f"{device['name']}_Backup.cfg"
         full_path = get_config_path(filename)
-        output = connection.send_config_from_file(full_path)
+        connection.send_config_from_file(full_path)
 
         connection.disconnect()
 

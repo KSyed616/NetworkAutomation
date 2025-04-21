@@ -1,5 +1,6 @@
 import os
 import yaml
+from netmiko import ConnectHandler
 from pyasn1.codec.ber import encoder, decoder
 from pysnmp.carrier.asyncio.dgram import udp
 from pysnmp.carrier.asyncio.dispatch import AsyncioDispatcher
@@ -93,6 +94,27 @@ def snmp_walk(oid_tuple, ip, community="public"):
     transportDispatcher.close_dispatcher()
 
     return results
+
+
+def manage_device(device, commands):
+    netmiko_dev = {
+        'device_type': device['device_type'],
+        'host': device['hostname'],
+        'username': device['username'],
+        'password': device['password'],
+        'secret': device['secret']
+    }
+    try:
+        connection = ConnectHandler(**netmiko_dev)
+        connection.enable()
+        print(f"Connected to {netmiko_dev['host']}")
+        output = connection.send_command(commands)
+        print(output, "\n\n")
+        connection.disconnect()
+
+    except Exception as e:
+
+        print(f"Failed to connect: {e}")
 
 
 def submenu():
@@ -225,6 +247,9 @@ def ip_addresses(device):
 
 
 def ip_protocols(device):
+    commands = "show ip protocols"
+    manage_device(device, commands)
+
     protocols_snmp = snmp_walk(
         oid_tuple=(1, 3, 6, 1, 2, 1, 4, 24, 4, 1, 5),
         ip=device['hostname'],

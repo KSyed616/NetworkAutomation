@@ -10,8 +10,9 @@ def submenu():
     print("2. Change Hostname")
     print("3. Add Default Route")
     print("4. Change Static Route")
-    print("5. Pick another Device")
-    print("6. Exit")
+    print("5. Configure OSPF")
+    print("6. Pick another Device")
+    print("7. Exit")
     return input("Select what you want to do: ")
 
 
@@ -82,6 +83,19 @@ def changeStaticRoute(device):
         applyConfig(device, [command])
 
 
+def configureOSPF(device):
+    process_id = input("Enter OSPF Process ID: ").strip()
+    network = input("Enter network to advertise: ").strip()
+    wildcard = input("Enter wildcard mask: ").strip()
+    area = input("Enter area: ").strip()
+
+    commands = [
+        f"router ospf {process_id}",
+        f"network {network} {wildcard} area {area}"
+    ]
+    applyConfig(device, commands)
+
+
 def applyConfig(device, commands):
     conn = connectToDevice(device)
     if not conn:
@@ -122,8 +136,10 @@ def main():
             elif choice == '4':
                 changeStaticRoute(device)
             elif choice == '5':
-                break
+                configureOSPF(device)
             elif choice == '6':
+                break
+            elif choice == '7':
                 return
             else:
                 print("Invalid choice. Try again.")
