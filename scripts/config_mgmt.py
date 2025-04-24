@@ -87,7 +87,7 @@ def view_backup_config(device):
     try:
         with open(filename, 'r') as file:
             contents = file.read()
-            print(f"\n📄 Backup Config: {filename}\n")
+            print(f"\nBackup Config: {filename}\n")
             print(contents)
     except FileNotFoundError:
         print(f"Backup file not found: {filename}")
